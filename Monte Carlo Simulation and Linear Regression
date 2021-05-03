@@ -1,0 +1,131 @@
+#ECONO PROBLEMA 18#
+
+#Ilustrando o C.L.T
+# Sabemos que, pelo CLT, dada uma amostra com n grande suficiente
+# a distribuição amostral da média amostral se aproximará da normal
+# Testaremos com a binomial por exemplo
+
+windows()
+random_binomail_data <- rbinom(9000, 10000, .5)
+hist(random_binomail_data ,freq=F)
+
+#Olhando para a média amostral e replicando diversas vezes, tentando aproximar à normal
+
+random_binomail_data_medias <- replicate(10000, expr=mean(rbinom(9000, 10000, .5)))
+
+plot(density(random_binomail_data_medias),  main="Similar a uma normal", lwd=2, xlab="x")
+hist(random_binomail_data_medias, add=T, col="grey", freq=F)
+
+#-------------------------------------------------------#
+#Por Monte Carlo - Binomial
+rep <- 10000
+
+#rodada1 simula uma rodada de 10 moedas jogadas
+#retorna TRUE se tivermos mais de 5 caras na rodada
+
+rodada1 <- function(){
+  sum(sample(c(0,1),10,replace=T)) > 5
+}
+
+#repetimos quantas vezes quiseremos
+
+mc.binom <- sum(replicate(rep,rodada1()))/rep
+mc.binom
+
+pbinom(5,10,0.5,lower.tail=FALSE)
+
+#-------------------------------------------------------#
+#Monte Carlo e regressão linear
+
+x = seq(80:110)
+length(x)
+
+#Randomizando com rnorm, onde b0 verdadeiro = 0 e b1 verdadeiro = 1
+y = x + rnorm(length(x))
+windows()
+
+plot(y~x)
+abline(lm(y~x))
+lm(y~x)
+
+#Simulando 100 vezes
+N = 100
+slope_sim = numeric(N)
+for (i in 1:N) {
+  y = x + rnorm(length(x))
+  y_lm = lm(y~x)
+  slope_sim[[i]] = as.vector(y_lm$coefficients[2])}
+
+#Geramos 100 estimativas da inclinação 
+slope_sim
+
+plot(density(slope_sim))
+mean(slope_sim)
+sd(slope_sim)
+sd(slope_sim)/sqrt(100)
+
+#------------------------#
+#No caso de uma binomial
+x = seq(80:110)
+length(x)
+
+#Randomizando com rbinom com 1000 repetições e prob = 0.5
+y = x + rbinom(length(x), 1000, 0.5)
+windows()
+
+plot(y~x)
+abline(lm(y~x))
+lm(y~x)
+
+#Simulando; consideramos b0 = 0; b1 = 1; u = rbinom(length(x), 1000, 0.5)
+N = 1000
+slope_sim = numeric(N)
+for (i in 1:N) {
+  y = x + rbinom(length(x), 1, 0.5)
+  y_lm = lm(y~x)
+  slope_sim[[i]] = as.vector(y_lm$coefficients[2])}
+
+#Geramos 100 estimativas da inclinação 
+slope_sim
+
+#Vemos que se assemelha a uma normal
+plot(density(slope_sim))
+hist(slope_sim)
+mean(slope_sim)
+#Vemos que a média se aproxima de 1, nosso valor verdadeiro
+sd(slope_sim)
+sd(slope_sim)/sqrt(100)
+
+#-----------------------------#
+#Fazendo com a beta
+x = seq(80:110)
+length(x)
+
+#Reta para o erro com distribuição beta, shape 1 = 0.7 e shape 2 = 1.5
+#b0 verdadeiro = 0 e slope b1 verdadeiro = 1
+y = x + rbeta(length(x), 0.7, 1.5)
+windows()
+
+plot(y~x)
+abline(lm(y~x))
+lm(y~x)
+
+#Simulando; consideramos b0 = 0; b1 = 1; u = rbinom(length(x), 0.7, 1.5)
+N = 1000
+slope_sim = numeric(N)
+for (i in 1:N) {
+  y = x + rbeta(length(x), 0.7, 1.5)
+  y_lm = lm(y~x)
+  slope_sim[[i]] = as.vector(y_lm$coefficients[2])}
+
+#Geramos 1000 estimativas da inclinação 
+slope_sim
+
+#Vemos que se assemelha a uma normal
+plot(density(slope_sim))
+hist(slope_sim)
+mean(slope_sim)
+#Vemos que a média se aproxima de 1, nosso valor verdadeiro
+sd(slope_sim)
+sd(slope_sim)/sqrt(100)
+#Desv. Padrão se aproxima de 0
