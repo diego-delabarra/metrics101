@@ -1,11 +1,9 @@
-#ECONO PROBLEMA 18#
 
 #Ilustrando o C.L.T
 # Sabemos que, pelo CLT, dada uma amostra com n grande suficiente
 # a distribuição amostral da média amostral se aproximará da normal
 # Testaremos com a binomial por exemplo
 
-windows()
 random_binomail_data <- rbinom(9000, 10000, .5)
 hist(random_binomail_data ,freq=F)
 
